@@ -9,7 +9,6 @@ import br.com.residencia.ecommerce.dto.CategoriaResumoDTO;
 import br.com.residencia.ecommerce.entity.Categoria;
 import br.com.residencia.ecommerce.repository.CategoriaRepository;
 
-
 @Service
 public class CategoriaService {
 
@@ -19,7 +18,6 @@ public class CategoriaService {
 	@Autowired
 	UniversalService utilService;
 
-	
 	public List<CategoriaResumoDTO> getAllDTO() {
 		List<CategoriaResumoDTO> listaObjDTO = new ArrayList<>();
 		List<Categoria> listaObj = categoriaRepository.findAll();
@@ -62,22 +60,22 @@ public class CategoriaService {
 
 	public Boolean deleteDTO(Integer id) {
 		Categoria obj = categoriaRepository.findById(id).orElse(null);
-		// Verifica se o ID passado e valido
+
 		if (obj != null) {
-			// Deleta o dado
+
 			categoriaRepository.deleteById(id);
-			// Tenta pegar o objeto no banco
+
 			Categoria objTeste = categoriaRepository.findById(id).orElse(null);
-			// Verificacao se o objeto foi deletado
+
 			if (objTeste == null) {
-				// Se foi deletado retorna verdadeiro
+
 				return true;
 			} else {
-				// Se nao foi deletado retorna falso
+
 				return false;
 			}
 		} else {
-			// Retorna falso se o objeto nao existir/Erro de ID
+
 			return false;
 		}
 	}

@@ -40,27 +40,20 @@ public class PedidoService {
 	public PedidoResumoDTO saveDTO(Pedido obj) {
 		Pedido objFinal = new Pedido();
 		if (obj != null) {
-			// Enviar o pedido recebido para ser preenchido corretamente
-			// ValorTotal = 0 / List = lista / idPedido = null
+
 			Pedido objNovo = utilService.savePedido(obj);
 
-			// Salvando o pedido no sistema e obtendo o ID dele
-			// ValorTotal = valor / List = null / idPedido = id
 			Pedido objSalvo = pedidoRepository.save(objNovo);
 
-			// Enviando o objeto novamente para ser preenchido a sua List ItemPedido
-			// Pegando a lista passada por parametro novamente
-			// ValorTotal = valor / List = lista / idPedido = id
 			objSalvo.setItemPedido(obj.getItemPedido());
 			objSalvo.setCliente(obj.getCliente());
 			Pedido objCorrigido = utilService.savePedido(objSalvo);
 
-			// Atualizando o pedido dentro do sistema
 			objFinal = pedidoRepository.save(objCorrigido);
 		}
-		//MANDAR EMAIL!!L!L!!!!!L!
+
 		utilService.mandarEmail(objFinal);
-	
+
 		return utilService.toPedidoDTO(objFinal);
 	}
 
@@ -73,27 +66,25 @@ public class PedidoService {
 	public Boolean deleteDTO(Integer id) {
 		Pedido obj = pedidoRepository.findById(id).orElse(null);
 
-		// Verifica se o ID passado e valido
 		if (obj != null) {
 			List<ItemPedido> listaItem = obj.getItemPedido();
 			for (ItemPedido item : listaItem) {
 				itemPedidoRepository.delete(item);
 			}
 
-			// Deleta o dado
 			pedidoRepository.deleteById(id);
-			// Tenta pegar o objeto no banco
+
 			Pedido objTeste = pedidoRepository.findById(id).orElse(null);
-			// Verificacao se o objeto foi deletado
+
 			if (objTeste == null) {
-				// Se foi deletado retorna verdadeiro
+
 				return true;
 			} else {
-				// Se nao foi deletado retorna falso
+
 				return false;
 			}
 		} else {
-			// Retorna falso se o objeto nao existir/Erro de ID
+
 			return false;
 		}
 	}

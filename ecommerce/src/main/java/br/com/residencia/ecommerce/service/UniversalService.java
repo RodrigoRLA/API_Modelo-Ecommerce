@@ -81,9 +81,6 @@ public class UniversalService {
 		return consultaCEPjDTO;
 	}
 
-	// Usada para salvar o objDTO recebido do controller
-	// Apartir das informacoes recebida preenche os dados de forma correta fazendo
-	// pesquisa no BD
 	public Endereco toEnderecoEntity(EnderecoDTO objDTO) {
 
 		Endereco obj = new Endereco();
@@ -107,13 +104,12 @@ public class UniversalService {
 				obj.setRua(objDTO.getRua());
 				obj.setUf(objDTO.getUf());
 			}
-			// Ira receber cliente nulo pois estamos apenas cadastrando o endereco isolado
+
 			obj.setCliente(null);
 		}
 		return obj;
 	}
 
-	// Usada para exibir na tela os dados salvos
 	public EnderecoResumoDTO toEnderecoDTO(Endereco obj) {
 		EnderecoResumoDTO novoDTO = new EnderecoResumoDTO();
 
@@ -152,7 +148,6 @@ public class UniversalService {
 		return novoDTO;
 	}
 
-	// Usada para exibir na tela os dados salvos
 	public EnderecoResumoDTO2 exibirEndereco(Endereco obj) {
 		EnderecoResumoDTO2 novoDTO = new EnderecoResumoDTO2();
 
@@ -222,6 +217,7 @@ public class UniversalService {
 
 		return endereco;
 	}
+
 // --------------------------------------------------------------------
 	public Cliente toClienteEntity(ClienteDTO objDTO) {
 
@@ -244,10 +240,9 @@ public class UniversalService {
 				obj.setTelefone(objDTO.getTelefone());
 			}
 
-			// Endereco
 			Endereco endereco = enderecoRepository.findById(objDTO.getEndereco().getIdEndereco()).orElse(null);
 			obj.setEndereco(endereco);
-			// Pedido
+
 			List<Pedido> listaPedido = new ArrayList<>();
 			listaPedido = pedidoRepository.findByCliente(obj);
 			obj.setPedido(listaPedido);
@@ -274,7 +269,7 @@ public class UniversalService {
 				objDTO.setNomeCompleto(obj.getNomeCompleto());
 				objDTO.setTelefone(obj.getTelefone());
 			}
-			// Endereco
+
 			Endereco endereco = enderecoRepository.findById(obj.getEndereco().getIdEndereco()).orElse(null);
 			EnderecoResumoDTO2 enderecoResumoDTO = new EnderecoResumoDTO2();
 
@@ -289,7 +284,6 @@ public class UniversalService {
 
 			objDTO.setEndereco(enderecoResumoDTO);
 
-			// Pedido
 			List<PedidoResumoDTO2> listaPedidoResumoDTO = new ArrayList<>();
 			atualizarPedidos();
 			List<Pedido> listaPedido = pedidoRepository.findByCliente(obj);
@@ -316,14 +310,11 @@ public class UniversalService {
 		if (obj != null) {
 			if (obj.getIdCliente() == null || obj.getIdCliente() == 0) {
 
-				// Categoria
 				Endereco end = enderecoRepository.findById(obj.getEndereco().getIdEndereco()).orElse(null);
 				objFinal.setEndereco(end);
 
-				// ItemPedido
 				objFinal.setPedido(null);
 
-				// Atributos Gerais
 				objFinal.setCpf(obj.getCpf());
 				objFinal.setDataNascimento(obj.getDataNascimento());
 				objFinal.setEmail(obj.getEmail());
@@ -331,7 +322,7 @@ public class UniversalService {
 				objFinal.setTelefone(obj.getTelefone());
 			}
 		}
-		// Retorno do pedido
+
 		return objFinal;
 	}
 
@@ -344,7 +335,6 @@ public class UniversalService {
 
 		if (obj != null && objExistente != null) {
 
-			// Dados Gerais Cliente
 			objFinal.setCpf(obj.getCpf());
 			objFinal.setIdCliente(id);
 			objFinal.setDataNascimento(obj.getDataNascimento());
@@ -353,7 +343,7 @@ public class UniversalService {
 			objFinal.setTelefone(obj.getTelefone());
 			objFinal.setEndereco(endereco);
 		} else {
-			// Preencher a listaItemNova e colocar no objeto
+
 		}
 		return objFinal;
 	}
@@ -373,15 +363,11 @@ public class UniversalService {
 	public Pedido savePedido(Pedido obj) {
 		Pedido pedidoFinal = new Pedido();
 		if (obj != null) {
-			
-		
-			
-			
-			// Dados Cliente
+
 			Cliente cliente = clienteRepository.findById(obj.getCliente().getIdCliente()).orElse(null);
 
 			if (obj.getIdPedido() == null || obj.getIdPedido() == 0) {
-				// Dados Lista itemPedido
+
 				List<ItemPedido> listaItemPedido = obj.getItemPedido();
 				Double total = 0.0;
 
@@ -394,28 +380,22 @@ public class UniversalService {
 					total += item.getValorLiquido();
 				}
 
-				// Dados Gerais
-				
-				if (obj.getDataEnvio()==null && obj.getDataEntrega()==null) {
+				if (obj.getDataEnvio() == null && obj.getDataEntrega() == null) {
 					pedidoFinal.setDataPedido(obj.getDataPedido());
 					pedidoFinal.setDataEntrega(obj.getDataPedido().plus(30, ChronoUnit.DAYS));
 					pedidoFinal.setDataEnvio(obj.getDataPedido().plus(32, ChronoUnit.DAYS));
 					pedidoFinal.setStatus(obj.getStatus());
-				}else {
+				} else {
 					pedidoFinal.setDataPedido(obj.getDataPedido());
 					pedidoFinal.setDataEntrega(obj.getDataEntrega());
 					pedidoFinal.setDataEnvio(obj.getDataEnvio());
 					pedidoFinal.setStatus(obj.getStatus());
 				}
-				
-				
-				
+
 				pedidoFinal.setCliente(cliente);
 				pedidoFinal.setValorTotal(total);
-				// Enviando a lista nula apenas para salvar os dados do Pedido
 				pedidoFinal.setItemPedido(null);
 			} else {
-				// Dados Lista itemPedido
 				List<ItemPedido> listaItemPedido = obj.getItemPedido();
 				Double total = 0.0;
 				List<ItemPedido> listaItemPedidoFinal = new ArrayList<>();
@@ -441,7 +421,7 @@ public class UniversalService {
 
 					listaItemPedidoFinal.add(itemSalvo);
 				}
-				// Dados Gerais
+
 				pedidoFinal.setIdPedido(obj.getIdPedido());
 				pedidoFinal.setCliente(cliente);
 				pedidoFinal.setDataEntrega(obj.getDataEntrega());
@@ -449,11 +429,11 @@ public class UniversalService {
 				pedidoFinal.setDataPedido(obj.getDataPedido());
 				pedidoFinal.setStatus(obj.getStatus());
 				pedidoFinal.setValorTotal(total);
-				// Setando a lista correta ja salvo dentro do sistema
+
 				pedidoFinal.setItemPedido(listaItemPedidoFinal);
 			}
 		}
-		// Retorno do pedido
+
 		return pedidoFinal;
 	}
 
@@ -466,7 +446,6 @@ public class UniversalService {
 
 		if (obj != null && objExistente != null) {
 
-			// Dados Gerais Pedido
 			pedidoFinal.setCliente(cliente);
 			pedidoFinal.setDataEntrega(obj.getDataEntrega());
 			pedidoFinal.setDataEnvio(obj.getDataEnvio());
@@ -474,7 +453,6 @@ public class UniversalService {
 			pedidoFinal.setIdPedido(id);
 			pedidoFinal.setStatus(obj.getStatus());
 
-			// Dados Lista ItemPedido dentro de Pedido
 			List<ItemPedido> listaItem = objExistente.getItemPedido();
 			List<ItemPedido> listaItemNova = obj.getItemPedido();
 
@@ -500,7 +478,7 @@ public class UniversalService {
 					}
 
 					if (isNew == true) {
-						// Preencher novo item na itemPedido lista
+
 						Produto produto = produtoRepository.findById(itemNovo.getProduto().getIdProduto()).orElse(null);
 						itemFinal.setProduto(produto);
 
@@ -518,7 +496,7 @@ public class UniversalService {
 					itemPedidoRepository.save(itemFinal);
 				}
 			} else {
-				// Preencher a listaItemNova e colocar no objeto
+
 			}
 
 			Pedido pedido = pedidoRepository.findById(id).orElse(null);
@@ -556,7 +534,7 @@ public class UniversalService {
 				objDTO.setStatus(obj.getStatus());
 				objDTO.setDataPedido(obj.getDataPedido());
 			}
-			// Cliente
+
 			Cliente cliente = clienteRepository.findById(obj.getCliente().getIdCliente()).orElse(null);
 			ClienteResumoDTO2 clienteResumoDTO = new ClienteResumoDTO2();
 
@@ -568,7 +546,7 @@ public class UniversalService {
 			clienteResumoDTO.setTelefone(cliente.getTelefone());
 
 			objDTO.setCliente(clienteResumoDTO);
-			// ItemPedido
+
 			List<ItemPedido> listaItemPedido = itemPedidoRepository.findByPedido(obj);
 			List<ItemPedidoResumoDTO2> listaPedidoDTO = new ArrayList<>();
 			Double total = 0.0;
@@ -583,10 +561,8 @@ public class UniversalService {
 				itemDTO.setValorBruto(item.getValorBruto());
 				itemDTO.setValorLiquido(item.getValorLiquido());
 
-				// Produto
 				itemDTO.setIdProduto(item.getProduto().getIdProduto());
 
-				// Pedido
 				itemDTO.setIdPedido(item.getPedido().getIdPedido());
 
 				listaPedidoDTO.add(itemDTO);
@@ -625,9 +601,9 @@ public class UniversalService {
 		relatorio.setDataPedido(pedido.getDataPedido());
 		relatorio.setIdPedido(pedido.getIdPedido());
 		relatorio.setValorTotal(pedido.getValorTotal());
-		
+
 		List<ListaRelatorioDTO> listaRelatorio = new ArrayList<>();
-		
+
 		for (ItemPedido p : listaPedido) {
 			ListaRelatorioDTO item = new ListaRelatorioDTO();
 			item.setIdProduto(p.getProduto().getIdProduto());
@@ -650,11 +626,10 @@ public class UniversalService {
 		ItemPedido obj = new ItemPedido();
 
 		if (objDTO != null) {
-			// Produto
+
 			Produto produto = produtoRepository.findById(objDTO.getProduto().getIdProduto()).orElse(null);
 			obj.setProduto(produto);
 
-			// Dados Gerais
 			if (objDTO.getIdItemPedido() == null || objDTO.getIdItemPedido() == 0) {
 				obj.setPercDesc(objDTO.getPercDesc());
 				obj.setPrecoVenda(produto.getValorUnitario());
@@ -669,7 +644,7 @@ public class UniversalService {
 				obj.setValorBruto(produto.getValorUnitario() * objDTO.getQuantidade());
 				obj.setValorLiquido((produto.getValorUnitario() * objDTO.getQuantidade()) * (1 - objDTO.getPercDesc()));
 			}
-			// Pedido
+
 			Pedido pedido = pedidoRepository.findById(objDTO.getPedido().getIdPedido()).orElse(null);
 			Pedido pedidoNovo = new Pedido();
 			if (pedido != null) {
@@ -687,7 +662,7 @@ public class UniversalService {
 		ItemPedidoResumoDTO objDTO = new ItemPedidoResumoDTO();
 
 		if (obj != null) {
-			// Produto
+
 			Produto produto = produtoRepository.findById(obj.getProduto().getIdProduto()).orElse(null);
 			ProdutoResumoDTO2 produtoResumoDTO = new ProdutoResumoDTO2();
 
@@ -703,7 +678,6 @@ public class UniversalService {
 
 			objDTO.setProduto(produtoResumoDTO);
 
-			// DADOS GERAIS
 			if (obj.getIdItemPedido() == null || obj.getIdItemPedido() == 0) {
 				objDTO.setPercDesc(obj.getPercDesc());
 				objDTO.setPrecoVenda(produto.getValorUnitario());
@@ -718,7 +692,7 @@ public class UniversalService {
 				objDTO.setValorBruto(produto.getValorUnitario() * obj.getQuantidade());
 				objDTO.setValorLiquido((produto.getValorUnitario() * obj.getQuantidade()) * (1 - obj.getPercDesc()));
 			}
-			// Pedido
+
 			Pedido pedido = pedidoRepository.findById(obj.getPedido().getIdPedido()).orElse(null);
 			PedidoResumoDTO2 pedidoResumoDTO = new PedidoResumoDTO2();
 
@@ -759,14 +733,11 @@ public class UniversalService {
 				obj.setQntdEstoque(objDTO.getQntdEstoque());
 				obj.setValorUnitario(objDTO.getValorUnitario());
 			}
-			// Categoria
+
 			Categoria categoria = categoriaRepository.findById(objDTO.getCategoria().getIdCategoria()).orElse(null);
-			// CategoriaResumoDTO catResumoDTO = new
-			// CategoriaResumoDTO(categoria.getIdCategoria(),categoria.getNome(),categoria.getDescricao());
 
 			obj.setCategoria(categoria);
-			
-			// Lista de ItemPedido
+
 			obj.setItemPedido(null);
 		}
 		return obj;
@@ -795,7 +766,7 @@ public class UniversalService {
 				objDTO.setQntdEstoque(obj.getQntdEstoque());
 				objDTO.setValorUnitario(obj.getValorUnitario());
 			}
-			// Categoria
+
 			Categoria categoria = categoriaRepository.findById(obj.getCategoria().getIdCategoria()).orElse(null);
 			CategoriaResumoDTO2 catDTO = new CategoriaResumoDTO2();
 
@@ -804,7 +775,7 @@ public class UniversalService {
 			catDTO.setIdCategoria(categoria.getIdCategoria());
 
 			objDTO.setCategoria(catDTO);
-			// Lista de ItemPedido
+
 			List<ItemPedido> listaItemPedido = itemPedidoRepository.findByProduto(obj);
 			List<ItemPedidoResumoDTO2> listaItemPedidoDTO = new ArrayList<>();
 			for (ItemPedido item : listaItemPedido) {
@@ -830,14 +801,11 @@ public class UniversalService {
 		if (obj != null) {
 			if (obj.getIdProduto() == null || obj.getIdProduto() == 0) {
 
-				// Categoria
 				Categoria categoria = categoriaRepository.findById(obj.getCategoria().getIdCategoria()).orElse(null);
 				produtoFinal.setCategoria(categoria);
 
-				// ItemPedido
 				produtoFinal.setItemPedido(null);
 
-				// Atributos Gerais
 				produtoFinal.setDataCadastro(obj.getDataCadastro());
 				produtoFinal.setDescricao(obj.getDescricao());
 				produtoFinal.setImagemFileName(obj.getImagemFileName());
@@ -848,7 +816,7 @@ public class UniversalService {
 				produtoFinal.setValorUnitario(obj.getValorUnitario());
 			}
 		}
-		// Retorno do pedido
+
 		return produtoFinal;
 	}
 

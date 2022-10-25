@@ -20,7 +20,6 @@ public class EnderecoService {
 	@Autowired
 	UniversalService utilService;
 
-	
 	public List<EnderecoResumoDTO> getAllDTO() {
 		List<EnderecoResumoDTO> listaObjDTO = new ArrayList<>();
 		listaObjDTO = utilService.getAllEndereco();
@@ -66,28 +65,28 @@ public class EnderecoService {
 			objExistente.setIdEndereco(id);
 
 			objAtualizado = enderecoRepository.save(objExistente);
-		} 
+		}
 		return utilService.exibirEndereco(objAtualizado);
 	}
 
 	public Boolean deleteDTO(Integer id) {
 		Endereco obj = enderecoRepository.findById(id).orElse(null);
-		// Verifica se o ID passado e valido
+
 		if (obj != null) {
-			// Deleta o dado
+
 			enderecoRepository.deleteById(id);
-			// Tenta pegar o objeto no banco
+
 			Endereco objTeste = enderecoRepository.findById(id).orElse(null);
-			// Verificacao se o objeto foi deletado
+
 			if (objTeste == null) {
-				// Se foi deletado retorna verdadeiro
+
 				return true;
 			} else {
-				// Se nao foi deletado retorna falso
+
 				return false;
 			}
 		} else {
-			// Retorna falso se o objeto nao existir/Erro de ID
+
 			return false;
 		}
 	}

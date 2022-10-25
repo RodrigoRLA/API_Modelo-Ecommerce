@@ -78,9 +78,7 @@ public class ProdutoService {
 		} catch (HttpClientErrorException e) {
 			e.printStackTrace();
 		}
-		// Converte os dados da editora recebidos no formato String em Entidade
-		// Coleta os dados da imagem, após upload via API, e armazena na Entidade
-		// Editora
+
 		if (null != imgDTO) {
 			Produto produtoFromJson = convertProdutoFromStringJson(produtoTxt);
 			produtoFromJson.setImagemFileName(imgDTO.getData().getImage().getFilename());
@@ -152,7 +150,7 @@ public class ProdutoService {
 			// POPULATE ITEMPEDIDO
 			objExistente.setItemPedido(objNovo.getItemPedido());
 		} else {
-			// Erro por ser nulo algum valor
+
 		}
 		Produto objAtualizado = produtoRepository.save(objExistente);
 		return utilService.toProdutoDTO(objAtualizado);
@@ -161,26 +159,23 @@ public class ProdutoService {
 	public Boolean deleteDTO(Integer id) {
 		Produto obj = produtoRepository.findById(id).orElse(null);
 
-		// Verifica se o ID passado e valido
 		if (obj != null) {
-			// Deleta o dado
+
 			produtoRepository.deleteById(id);
-			// Tenta pegar o objeto no banco
+
 			Produto objTeste = produtoRepository.findById(id).orElse(null);
-			// Verificacao se o objeto foi deletado
+
 			if (objTeste == null) {
-				// Se foi deletado retorna verdadeiro
+
 				return true;
 			} else {
-				// Se nao foi deletado retorna falso
+
 				return false;
 			}
 		} else {
-			// Retorna falso se o objeto nao existir/Erro de ID
+
 			return false;
 		}
 	}
-
-	// ------------
 
 }

@@ -15,43 +15,41 @@ import br.com.residencia.ecommerce.repository.ItemPedidoRepository;
 public class ItemPedidoService {
 	@Autowired
 	ItemPedidoRepository itemPedidoRepository;
-	
+
 	@Autowired
 	UniversalService utilService;
-	
-	
-	
+
 	public List<ItemPedidoResumoDTO> getAllDTO() {
 		List<ItemPedidoResumoDTO> listaItemPedidoDTO = new ArrayList<>();
 		List<ItemPedido> listaItemPedido = itemPedidoRepository.findAll();
-		
-		for(ItemPedido obj: listaItemPedido) {
+
+		for (ItemPedido obj : listaItemPedido) {
 			ItemPedidoResumoDTO objDTO = new ItemPedidoResumoDTO();
 			objDTO = utilService.toItemPedidoDTO(obj);
 			listaItemPedidoDTO.add(objDTO);
 		}
 		return listaItemPedidoDTO;
 	}
-	
+
 	public ItemPedidoResumoDTO getByIdDTO(Integer id) {
 		ItemPedido obj = itemPedidoRepository.findById(id).orElse(null);
 		return utilService.toItemPedidoDTO(obj);
 	}
-	
+
 	public ItemPedidoResumoDTO saveDTO(ItemPedidoDTO objDTO) {
 		ItemPedido objSalvo = new ItemPedido();
-		if(objDTO!=null) {			
+		if (objDTO != null) {
 			ItemPedido obj = utilService.toItemPedidoEntity(objDTO);
 			objSalvo = itemPedidoRepository.save(obj);
-		}		
+		}
 		return utilService.toItemPedidoDTO(objSalvo);
 	}
-		
+
 	public ItemPedidoResumoDTO updateDTO(ItemPedidoDTO objDTO, Integer id) {
 		ItemPedido objExistente = itemPedidoRepository.findById(id).orElse(null);
-		if (objDTO!=null && objExistente!=null) {
+		if (objDTO != null && objExistente != null) {
 			ItemPedido objNovo = utilService.toItemPedidoEntity(objDTO);
-			
+
 			objExistente.setIdItemPedido(id);
 			objExistente.setPedido(objNovo.getPedido());
 			objExistente.setPercDesc(objNovo.getPercDesc());
@@ -63,32 +61,29 @@ public class ItemPedidoService {
 		}
 		ItemPedido objAtualizado = itemPedidoRepository.save(objExistente);
 
-		return utilService.toItemPedidoDTO(objAtualizado);	
+		return utilService.toItemPedidoDTO(objAtualizado);
 	}
-	
+
 	public Boolean deleteDTO(Integer id) {
 		ItemPedido obj = itemPedidoRepository.findById(id).orElse(null);
-		
-		//Verifica se o ID passado e valido 
-		if (obj!=null) {
-			//Deleta o dado
+
+		if (obj != null) {
+
 			itemPedidoRepository.deleteById(id);
-			//Tenta pegar o objeto no banco
+
 			ItemPedido objTeste = itemPedidoRepository.findById(id).orElse(null);
-			//Verificacao se o objeto foi deletado
-			if (objTeste==null) {
-				//Se foi deletado retorna verdadeiro
+
+			if (objTeste == null) {
+
 				return true;
-			}
-			else {
-				//Se nao foi deletado retorna falso
+			} else {
+
 				return false;
 			}
-		}
-		else {
-			//Retorna falso se o objeto nao existir/Erro de ID
+		} else {
+
 			return false;
 		}
-	}	
-	//---------------------
+	}
+	// ---------------------
 }

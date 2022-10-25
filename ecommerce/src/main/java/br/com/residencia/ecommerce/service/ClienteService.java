@@ -35,7 +35,7 @@ public class ClienteService {
 	}
 
 	public ClienteResumoDTO saveDTO(Cliente obj) {
-		
+
 		Cliente objFinal = new Cliente();
 		if (obj != null) {
 
